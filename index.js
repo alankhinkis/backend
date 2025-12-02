@@ -1,71 +1,80 @@
 const express = require('express');
-const app = express();
+const cors = require('cors');
 
-// Middleware to parse JSON bodies
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(cors());
 app.use(express.json());
 
-// In-memory "database"
-let todos = [
-  { id: 1, text: 'Learn backend', done: false },
-  { id: 2, text: 'Play with Postman', done: false },
-  //Add more
+// Data
+
+const aboutMe = {
+    name: "Alan Khinkis",
+    major: "Applied Economics & Management",
+    year: "2029",
+    hometown: "Buffalo, NY"
+};
+
+let projects = [
+    {
+        title: "Personal Website",
+        description: "A portfolio website built with HTML and CSS.",
+        tech: ["HTML", "CSS", "JavaScript"]
+    },
+    {
+        title: "Nasdaq Futures — Intraday Trading Strategy Backtester",
+        description: "Python-based backtesting system for intraday futures strategies.",
+        tech: ["Python", "pandas", "matplotlib"]
+    }
 ];
 
-// GET /todos - get all todos
-app.get('/todos', (req, res) => {
-  res.json(todos);
+const hobbies = [
+    "Skiing",
+    "Hiking",
+    "Playing Poker",
+    "Coding"
+];
+
+// Endpoints
+
+// 1. GET /api/about
+app.get('/api/about', (req, res) => {
+    res.json(aboutMe);
 });
 
-// POST /todos - create a new todo
-app.post('/todos', (req, res) => {
-  const { text } = req.body;
-  if (!text) {
-    return res.status(400).json({ error: 'text is required' });
-  }
-
-  const newTodo = {
-    id: todos.length + 1,
-    text,
-    done: false,
-  };
-
-  todos.push(newTodo);
-  res.status(201).json(newTodo);
+// 2. GET /api/projects
+app.get('/api/projects', (req, res) => {
+    res.json(projects);
 });
 
-// PATCH /todos/:id - mark a todo as done
-app.patch('/todos/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const todo = todos.find((t) => t.id === id);
+// 3. POST /api/projects
+app.post('/api/projects', (req, res) => {
+    const newProject = req.body;
 
-  if (!todo) {
-    return res.status(404).json({ error: 'Todo not found' });
-  }
+    if (!newProject.title || !newProject.description) {
+        return res.status(400).json({ error: "Title and description are required" });
+    }
 
-  todo.done = true;
-  res.json(todo);
+    projects.push(newProject);
+    res.status(201).json({ message: "Project added successfully", project: newProject });
 });
 
-// DELETE /todos/:id - delete a todo
-app.delete('/todos/:id', (req, res) => {
-  const id = Number(req.params.id);
-  const index = todos.findIndex((t) => t.id === id);
-
-  if (index === -1) {
-    return res.status(404).json({ error: 'Todo not found' });
-  }
-
-  const deletedTodo = todos[index];
-  todos.splice(index, 1);
-
-  res.json({
-    message: 'Todo deleted successfully',
-    todo: deletedTodo
-  });
+// 4. CREATIVE ENDPOINT: GET /api/hobbies
+app.get('/api/hobbies', (req, res) => {
+    res.json({
+        category: "My Interests",
+        items: hobbies
+    });
 });
 
-// Start server
-const PORT = 3000;
+// Root route
+app.get('/', (req, res) => {
+    res.send('Mini Portfolio API is running! Try /api/about');
+});
+
+// Server start
 app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
