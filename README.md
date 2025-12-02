@@ -20,7 +20,7 @@ This is a backend API built with Node.js and Express for a personal portfolio. I
 
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### 1. Get About Info
 Returns basic information about the developer.
@@ -59,3 +59,4 @@ Adds a project to the list (stored in memory).
 Returns a list of personal interests.
 * **Method:** `GET`
 * **URL:** `http://localhost:3000/api/hobbies`
+
